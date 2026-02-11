@@ -1,0 +1,104 @@
+name: 🐛 Bug Report
+description: Report a bug in Municorn OS
+title: "[Bug]: "
+labels: ["bug", "triage-needed"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Thank you for reporting a bug! 🙏
+        Our AI triage system will analyze this within minutes and assign it for resolution.
+
+  - type: input
+    id: product-area
+    attributes:
+      label: Product Area
+      description: Which part of Municorn OS is affected?
+      placeholder: e.g., Portal, Billing, Voice, Workflows, API
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: How severe is this bug?
+      options:
+        - "🔴 Critical — System down / data loss"
+        - "🟠 High — Major feature broken, no workaround"
+        - "🟡 Medium — Feature impaired, workaround exists"
+        - "🟢 Low — Minor issue, cosmetic"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the Bug
+      description: A clear and concise description of what the bug is.
+      placeholder: "When I click X, Y happens instead of Z..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro-steps
+    attributes:
+      label: Steps to Reproduce
+      description: Step-by-step instructions to reproduce the behavior.
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. Scroll down to '...'
+        4. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-vs-actual
+    attributes:
+      label: Expected vs Actual Behavior
+      description: What did you expect to happen? What actually happened?
+      placeholder: |
+        **Expected**: The page should load within 2 seconds.
+        **Actual**: The page shows a 500 error after 30 seconds.
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots or Logs
+      description: If applicable, add screenshots, error messages, or logs.
+      placeholder: Paste screenshots or error logs here...
+    validations:
+      required: false
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Environment
+      description: Where did this occur?
+      options:
+        - Production
+        - Staging
+        - Local Development
+    validations:
+      required: true
+
+  - type: input
+    id: tenant-id
+    attributes:
+      label: Tenant / Location ID
+      description: Your Municorn tenant ID or GHL location ID (if applicable)
+      placeholder: "e.g., mJCPyn2XDFGSbKvPYlBv"
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any other context about the problem (browser, OS, API version, etc.)
+      placeholder: "Chrome 120 on macOS, API v2, etc."
+    validations:
+      required: false

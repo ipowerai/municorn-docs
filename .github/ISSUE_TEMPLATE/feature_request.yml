@@ -1,0 +1,78 @@
+name: ✨ Feature Request
+description: Suggest a new feature or improvement for Municorn OS
+title: "[Feature]: "
+labels: ["feature-request", "triage-needed"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## We'd love to hear your ideas! 💡
+        Feature requests are reviewed by our AI triage system and product team.
+
+  - type: input
+    id: product-area
+    attributes:
+      label: Product Area
+      description: Which part of Municorn OS would this affect?
+      placeholder: e.g., Portal, Billing, Voice, Workflows, API, New Product
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this feature to your workflow?
+      options:
+        - "🔴 Critical — Blocking our business"
+        - "🟠 High — Major productivity impact"
+        - "🟡 Medium — Nice to have, improves efficiency"
+        - "🟢 Low — Cosmetic or minor improvement"
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: What problem does this feature solve? Why is it needed?
+      placeholder: "Currently, we have to manually do X, which takes Y hours per week..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Describe your ideal solution. How should it work?
+      placeholder: "It would be great if Municorn could automatically..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Use Case
+      description: Describe specific scenarios where this feature would be valuable.
+      placeholder: |
+        - As a dental practice, I need to...
+        - As an HVAC company, we want to...
+    validations:
+      required: false
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Have you tried any workarounds or alternative solutions?
+      placeholder: "We currently work around this by..."
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any mockups, screenshots, or references that illustrate the feature.
+    validations:
+      required: false

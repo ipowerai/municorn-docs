@@ -1,0 +1,128 @@
+name: 🤖 AI Issue Triage
+
+on:
+  issues:
+    types: [opened]
+  issue_comment:
+    types: [created]
+
+permissions:
+  issues: write
+
+jobs:
+  triage-new-issue:
+    if: github.event_name == 'issues'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Acknowledge Issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `👋 Thanks for reporting this, @${context.payload.issue.user.login}!\n\nOur team has been notified and is reviewing your report. We'll update you here once we have more information.\n\n---\n*Municorn Support Team*`
+            });
+
+      - name: Send to AI Triage
+        id: triage
+        env:
+          AI_SWARM_URL: ${{ secrets.AI_SWARM_URL }}
+          TRIAGE_SECRET: ${{ secrets.TRIAGE_WEBHOOK_SECRET }}
+        run: |
+          RESPONSE=$(curl -s -w "\n%{http_code}" \
+            -X POST "${AI_SWARM_URL}/api/issues/triage" \
+            -H "Content-Type: application/json" \
+            -H "X-Webhook-Secret: ${TRIAGE_SECRET}" \
+            -d @- <<EOF
+          {
+            "action": "${{ github.event.action }}",
+            "issue": {
+              "number": ${{ github.event.issue.number }},
+              "title": $(echo '${{ github.event.issue.title }}' | jq -Rs .),
+              "body": $(echo '${{ github.event.issue.body }}' | jq -Rs .),
+              "user": "${{ github.event.issue.user.login }}",
+              "url": "${{ github.event.issue.html_url }}",
+              "labels": $(echo '${{ toJSON(github.event.issue.labels) }}' | jq -c '[.[].name]')
+            },
+            "repository": "${{ github.repository }}"
+          }
+          EOF
+          )
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          BODY=$(echo "$RESPONSE" | head -n -1)
+
+          echo "status=$HTTP_CODE" >> $GITHUB_OUTPUT
+          echo "response=$BODY" >> $GITHUB_OUTPUT
+
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "::warning::AI triage returned $HTTP_CODE"
+          fi
+
+      - name: Apply Triage Labels
+        if: steps.triage.outputs.status == '200'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const response = JSON.parse('${{ steps.triage.outputs.response }}');
+
+            // Apply AI-suggested labels
+            if (response.labels && response.labels.length > 0) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                labels: response.labels
+              });
+            }
+
+            // Post customer-friendly triage comment (no internal details)
+            if (response.triage_comment) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: response.triage_comment
+              });
+            }
+
+  # Multi-turn human-in-the-loop: when a team member comments on an issue,
+  # forward the full conversation to ai-swarm for follow-up Jules dispatch.
+  # Customer comments are ignored (only org member comments trigger follow-up).
+  handle-comment:
+    if: >
+      github.event_name == 'issue_comment' &&
+      github.event.comment.author_association == 'OWNER' ||
+      github.event.comment.author_association == 'MEMBER' ||
+      github.event.comment.author_association == 'COLLABORATOR'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Forward to AI Swarm
+        env:
+          AI_SWARM_URL: ${{ secrets.AI_SWARM_URL }}
+          TRIAGE_SECRET: ${{ secrets.TRIAGE_WEBHOOK_SECRET }}
+        run: |
+          curl -s -X POST "${AI_SWARM_URL}/api/issues/followup" \
+            -H "Content-Type: application/json" \
+            -H "X-Webhook-Secret: ${TRIAGE_SECRET}" \
+            -d @- <<EOF
+          {
+            "action": "comment_added",
+            "issue": {
+              "number": ${{ github.event.issue.number }},
+              "title": $(echo '${{ github.event.issue.title }}' | jq -Rs .),
+              "body": $(echo '${{ github.event.issue.body }}' | jq -Rs .),
+              "user": "${{ github.event.issue.user.login }}",
+              "url": "${{ github.event.issue.html_url }}",
+              "labels": $(echo '${{ toJSON(github.event.issue.labels) }}' | jq -c '[.[].name]')
+            },
+            "comment": {
+              "body": $(echo '${{ github.event.comment.body }}' | jq -Rs .),
+              "user": "${{ github.event.comment.user.login }}",
+              "author_association": "${{ github.event.comment.author_association }}"
+            },
+            "repository": "${{ github.repository }}"
+          }
+          EOF
