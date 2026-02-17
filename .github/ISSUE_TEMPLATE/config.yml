@@ -1,11 +1,11 @@
 blank_issues_enabled: false
 contact_links:
   - name: 💬 General Questions
-    url: https://municorn.ai/support
+    url: https://ipowerai.com/support
     about: For general questions, visit our support page
   - name: 📚 Documentation
-    url: https://municorn.ai/docs
+    url: https://ipowerai.com/docs
     about: Check our documentation for guides and API reference
   - name: 🔒 Security Vulnerability
-    url: mailto:security@municorn.ai
+    url: mailto:security@ipowerai.com
     about: For security vulnerabilities, email us directly (do NOT open a public issue)

@@ -4,7 +4,7 @@ Welcome to the public documentation and issue tracker for **Municorn OS** — th
 
 ## 🐛 Report a Bug
 
-Found something broken? [**Open a Bug Report →**](https://github.com/hadisols/municorn-docs/issues/new?template=bug_report.yml)
+Found something broken? [**Open a Bug Report →**](https://github.com/ipowerai/municorn-docs/issues/new?template=bug_report.yml)
 
 Our AI triage system will:
 1. **Acknowledge** your issue within seconds
@@ -14,7 +14,7 @@ Our AI triage system will:
 
 ## ✨ Request a Feature
 
-Have an idea? [**Submit a Feature Request →**](https://github.com/hadisols/municorn-docs/issues/new?template=feature_request.yml)
+Have an idea? [**Submit a Feature Request →**](https://github.com/ipowerai/municorn-docs/issues/new?template=feature_request.yml)
 
 ## 📚 Documentation
 

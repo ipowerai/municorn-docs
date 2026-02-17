@@ -2,7 +2,7 @@
 # Setup labels for the municorn-docs repository
 # Usage: bash setup-labels.sh
 
-REPO="hadisols/municorn-docs"
+REPO="ipowerai/municorn-docs"
 
 echo "🏷️  Setting up labels for $REPO..."
 
